@@ -1,6 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Negus = System.Console;
-// Trapping for Null Input
 
 namespace ParkingSystem
 {
@@ -50,7 +49,7 @@ namespace ParkingSystem
     {
         public override double chargeFee(double hours, double minutes)
         {
-            if(minutes >= 30)
+            if (minutes >= 30)
             {
                 chargefee = (hours * 15.00) + sedanFee;
                 return chargefee + 15.00;
@@ -94,22 +93,35 @@ namespace ParkingSystem
                 DateTime parkout = DateTime.Now;
                 Negus.Write("\tParking System\n\n\nPlate No.:");
                 string plateNo = Negus.ReadLine();
+                while (true)
+                {
+                    if (plateNo.Equals(""))
+                    {
+                        Negus.WriteLine("Field cannot be null.");
+                        Negus.Write("\nPlate No.:");
+                        plateNo = Negus.ReadLine();
+                    }
+                    else
+                        break;
+                }           
                 bool check = true;
                 Negus.Write("\nVehicle Type.:");
                 vehicleType = Negus.ReadLine();
-                while(check)
+                while (check)
                 {
-                    switch (vehicleType.ToLower())
+                    switch (vehicleType.ToLower().Trim())
                     {
                         case "motorbike":
-                            check = false;
-                            break;
                         case "suv":
                         case "van":
-                            check = false;
-                            break;
                         case "sedan":
                             check = false;
+                            break;
+                        case "":
+                            Negus.WriteLine("Field cannot be empty.");
+                            check = true;
+                            Negus.Write("\nVehicle Type.:");
+                            vehicleType = Negus.ReadLine();
                             break;
                         default:
                             Negus.WriteLine("Invalid Vehicle Type");
@@ -120,13 +132,13 @@ namespace ParkingSystem
 
                     }
                 }
-               
+
 
                 Negus.Write("\nVehicle Brand:");
                 string vehicleBrand = Negus.ReadLine();
 
                 // Out Parameters
-                Blueprint bp = new Blueprint(plateNo, vehicleType, vehicleBrand);
+                Blueprint bp = new Blueprint(plateNo.Trim(), vehicleType.Trim(), vehicleBrand.Trim());
                 string pn, vt, vb;
                 bp.GetPoint(out pn, out vt, out vb);
 
@@ -134,7 +146,8 @@ namespace ParkingSystem
                 double days = 0;
                 double hours = 0;
                 double minutes = 0;
-                try {
+                try
+                {
                     Negus.Write("\n\nEnter Date and Time of Park-out in this format\nmm/dd/yy 00:00AM/PM\n:");
                     string input = Negus.ReadLine();
                     parkout = DateTime.Parse(input);
@@ -144,31 +157,22 @@ namespace ParkingSystem
                     minutes = calcDate.Minutes;
                     if (days < 0 || hours < 0 || minutes < 0)
                     {
-                        Negus.WriteLine("\nInvalid Date/Time Format.Please follow these format.\nmm / dd / yy 00:00AM / PM\nex. 09 / 06 / 03 11:00PM\n\n");
+                        Negus.WriteLine("\nInvalid Date/Time\nNOTE: Park-out date/day is invalid, must not be date/time before the park-in date\nTry again.\n");
                         continue;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Negus.WriteLine("\nInvalid Date/ Time Format. Please follow these format.\nmm/dd/yy 00:00AM/PM\nex. 09/06/03 11:00PM\n\n");
                     continue;
                 }
-                double checkNega = identifyVehicleType(vt.ToLower(), (double)hours, days, minutes);
-                if(checkNega == 0) // if check is zero then switch statement detected an invalid vehicle type, thus, returning 0
-                {
-                    Negus.Write($"\nPlate No.: {pn}\nVehicle Type: {vt}\nVehicle Brand: {vb}\n\nYou've entered an invalid vehicle type. Choose from these vehicle types below:\n[Motorbike], [SUV], [Van], [Sedan]\nTry again.\n\n");
-                    continue;
-                }
-          
-                else
-                {
-                    Negus.Write($"\nPlate No.: {pn}\nVehicle Type: {vt}\nVehicle Brand: {vb}\n");
-                    Negus.Write($"\nDate/Time-in: {parkin}\n\t Out: {parkout}\nParking Time: {days} day(s) {hours} hr(s) {minutes} minute(s)\nAmount: {checkNega}"); //identify vehicle and compute charge
-                    Negus.WriteLine("\nDo another computation?(Yes/No): ");
-                    choice = Negus.ReadLine();
-                }
+                double amount = identifyVehicleType(vt.ToLower(), (double)hours, days, minutes);
+                Negus.Write($"\nPlate No.: {pn}\nVehicle Type: {vt}\nVehicle Brand: {vb}\n");
+                Negus.Write($"\nDate/Time-in: {parkin}\n\t Out: {parkout}\nParking Time: {days} day(s) {hours} hr(s) {minutes} minute(s)\nAmount: {amount}"); //identify vehicle and compute charge
+                Negus.WriteLine("\nDo another computation?(Yes/No): ");
+                choice = Negus.ReadLine();
 
-            } while (!choice.ToLower().Equals("no"));
+            } while (!choice.ToLower().Trim().Equals("no"));
 
         }
         // Identifies vehicle and calculate charge fees with hours and days arguments
@@ -180,11 +184,11 @@ namespace ParkingSystem
             switch (vehicle)
             {
                 case "motorbike":
-                    if(days > 0)
+                    if (days > 0)
                     {
                         if (hours == 0) // if hours == 0 then proceed to charge 1 day == 24 hours to chargeFee method
                             return motorbike.chargeFee((days * 24), minutes);
-                        else 
+                        else
                         {
                             double current = motorbike.chargeFee((hours + (days * 24)), minutes);
                             return current;
@@ -197,17 +201,17 @@ namespace ParkingSystem
                 case "van":
                     if (days > 0)
                     {
-                        if(hours == 0)
+                        if (hours == 0)
                             return suvan.chargeFee((days * 24), minutes);
                         else
                         {
                             double current = suvan.chargeFee((hours + (days * 24)), minutes);
                             return current;
                         }
-                        
+
                     }
                     else
-                        return suvan.chargeFee(hours,minutes);
+                        return suvan.chargeFee(hours, minutes);
                     break;
                 case "sedan":
                     if (days > 0)
@@ -224,6 +228,7 @@ namespace ParkingSystem
                         return sedan.chargeFee(hours, minutes);
                     break;
                 default:
+                    Negus.WriteLine("Invalid Vehicle");
                     return 0;
                     break;
             }
