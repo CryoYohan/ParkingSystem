@@ -94,7 +94,7 @@ namespace ParkingSystem
                 string plateNo = Negus.ReadLine();
                 while (true)
                 {
-                    if (plateNo.Equals(""))
+                    if (plateNo.Trim().Equals(""))
                     {
                         Negus.WriteLine("Field cannot be null.");
                         Negus.Write("\nPlate No.:");
@@ -131,10 +131,20 @@ namespace ParkingSystem
 
                     }
                 }
-
-
                 Negus.Write("\nVehicle Brand:");
                 string vehicleBrand = Negus.ReadLine();
+                while (true)
+                {
+                    if (vehicleBrand.Trim().Equals(""))
+                    {
+                        Negus.WriteLine("Field cannot be empty.");
+                        Negus.Write("\nVehicle Brand:");
+                        vehicleBrand = Negus.ReadLine();
+                    }
+                    else
+                        break;
+                }
+               
 
                 // Out Parameters
                 Blueprint bp = new Blueprint(plateNo.Trim(), vehicleType.Trim(), vehicleBrand.Trim());
