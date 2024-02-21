@@ -1,4 +1,3 @@
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Negus = System.Console;
 
 namespace ParkingSystem
@@ -146,25 +145,36 @@ namespace ParkingSystem
                 double days = 0;
                 double hours = 0;
                 double minutes = 0;
-                try
+                while (true)
                 {
-                    Negus.Write("\n\nEnter Date and Time of Park-out in this format\nmm/dd/yy 00:00AM/PM\n:");
-                    string input = Negus.ReadLine();
-                    parkout = DateTime.Parse(input);
-                    TimeSpan calcDate = parkout.Subtract(parkingTime);
-                    days = calcDate.Days;
-                    hours = calcDate.Hours;
-                    minutes = calcDate.Minutes;
-                    if (days < 0 || hours < 0 || minutes < 0)
+                    try
                     {
-                        Negus.WriteLine("\nInvalid Date/Time\nNOTE: Park-out date/day is invalid, must not be date/time before the park-in date\nTry again.\n");
+                        Negus.Write("\n\nEnter Date and Time of Park-out in this format\nmm/dd/yy 00:00AM/PM\n:");
+                        string input = Negus.ReadLine();
+                        parkout = DateTime.Parse(input);
+                        TimeSpan calcDate = parkout.Subtract(parkingTime);
+                        days = calcDate.Days;
+                        hours = calcDate.Hours;
+                        minutes = calcDate.Minutes;
+                        if (days < 0 || hours < 0 || minutes < 0)
+                        {
+                            Negus.WriteLine("\nInvalid Date/Time\nNOTE: Park-out date/day is invalid, must not be date/time before the park-in date\nTry again.\n");
+                            Negus.Write("\n\nEnter Date and Time of Park-out in this format\nmm/dd/yy 00:00AM/PM\n:");
+                            input = Negus.ReadLine();
+                            parkout = DateTime.Parse(input);
+                            calcDate = parkout.Subtract(parkingTime);
+                            days = calcDate.Days;
+                            hours = calcDate.Hours;
+                            minutes = calcDate.Minutes;
+                        }
+                        else
+                            break;
+                    }
+                    catch (Exception e)
+                    {
+                        Negus.WriteLine("\nInvalid Date/ Time Format. Please follow these format.\nmm/dd/yy 00:00AM/PM\nex. 09/06/03 11:00PM\n");
                         continue;
                     }
-                }
-                catch (Exception e)
-                {
-                    Negus.WriteLine("\nInvalid Date/ Time Format. Please follow these format.\nmm/dd/yy 00:00AM/PM\nex. 09/06/03 11:00PM\n\n");
-                    continue;
                 }
                 double amount = identifyVehicleType(vt.ToLower(), (double)hours, days, minutes);
                 Negus.Write($"\nPlate No.: {pn}\nVehicle Type: {vt}\nVehicle Brand: {vb}\n");
