@@ -90,7 +90,7 @@ namespace ParkingSystem
                 string vehicleType = "";
                 DateTime parkingTime = DateTime.Now;
                 DateTime parkout = DateTime.Now;
-                Negus.Write("\tParking System\n\n\nPlate No.:");
+                Negus.Write("\tParking System\n\n\tVehicle Type:\n\tMotorbike, SUV, Van, Sedan\n\nPlate No.:");
                 string plateNo = Negus.ReadLine();
                 while (true)
                 {
@@ -169,13 +169,7 @@ namespace ParkingSystem
                         if (days < 0 || hours < 0 || minutes < 0)
                         {
                             Negus.WriteLine("\nInvalid Date/Time\nNOTE: Park-out date/day is invalid, must not be date/time before the park-in date\nTry again.\n");
-                            Negus.Write("\n\nEnter Date and Time of Park-out in this format\nmm/dd/yy 00:00AM/PM\n:");
-                            input = Negus.ReadLine();
-                            parkout = DateTime.Parse(input);
-                            calcDate = parkout.Subtract(parkingTime);
-                            days = calcDate.Days;
-                            hours = calcDate.Hours;
-                            minutes = calcDate.Minutes;
+                            continue;
                         }
                         else
                             break;
